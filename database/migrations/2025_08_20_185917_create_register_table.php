@@ -1,36 +1,36 @@
-<?php
+    <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+    use Illuminate\Database\Migrations\Migration;
+    use Illuminate\Database\Schema\Blueprint;
+    use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+    return new class extends Migration
     {
-        Schema::create('register', function (Blueprint $table) {
-            $table->id();
-            $table->string('avatar')->nullable();
-            $table->string('name');
-            $table->string('phone')->unique()->nullable();
-            $table->string('email')->unique();
-            $table->string('location')->nullable();
-            $table->string('password');
-            $table->enum('approval_status', ['pending', 'approved', 'denied'])->default('pending');
-            $table->text('admin_message')->nullable();
-            $table->rememberToken();
-            $table->timestamps();
-        });
-    }
+        /**
+         * Run the migrations.
+         */
+        public function up(): void
+        {
+            Schema::create('register', function (Blueprint $table) {
+                $table->id();
+                $table->string('avatar')->nullable();
+                $table->string('name');
+                $table->string('phone')->unique()->nullable();
+                $table->string('email')->unique();
+                $table->string('location')->nullable();
+                $table->string('password');
+                $table->enum('approval_status', ['pending', 'approved', 'denied'])->default('pending');
+                $table->text('admin_message')->nullable();
+                $table->rememberToken();
+                $table->timestamps();
+            });
+        }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('register');
-    }
-};
+        /**
+         * Reverse the migrations.
+         */
+        public function down(): void
+        {
+            Schema::dropIfExists('register');
+        }
+    };

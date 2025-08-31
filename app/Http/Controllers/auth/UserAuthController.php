@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\auth;
 
 
 use Illuminate\Support\Facades\Auth;
@@ -9,7 +9,7 @@ use App\Http\Controllers\Controller;
 
 use App\Models\Register;
 
-class AuthController extends Controller
+class UserAuthController extends Controller
 {
     
     public function register(Request $request){
@@ -17,13 +17,13 @@ class AuthController extends Controller
             'name'=>'required|string|max:255',
             'email'=>'required|string|email|max:255',
             'password'=>'required|string|min:6',
-        ]);
+        ]); 
         $data=Register::create([
             'name'=>$request->name,
             'email'=>$request->email,
             'password'=>bcrypt($request->password),
         ]);
-             $token=auth('api')->login($data);
+             $token=auth('user')->login($data);
              return $this->respondWithToken($token);
 
     }
@@ -33,13 +33,33 @@ class AuthController extends Controller
 
         //return $credentials;
 
-        if (! $token = auth('api')->attempt($credentials)) {
+        if (! $token = auth('user')->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
         
         
         return $this->respondWithToken($token);
     }
+
+// this login function is only for debugging purpose
+//     public function login(Request $request)
+// {
+//     $credentials = $request->only('email', 'password');
+
+//     $user = Register::where('email', $credentials['email'])->first();
+
+//     if (! $user) {
+//         return response()->json(['error' => 'No user found with that email'], 404);
+//     }
+
+//     return response()->json([
+//         'email_sent' => $credentials['email'],
+//         'password_sent' => $credentials['password'],
+//         'password_in_db' => $user->password,
+//         'password_matches' => \Hash::check($credentials['password'], $user->password),
+//         'auth_attempt' => auth('user')->attempt($credentials) ? 'success' : 'fail'
+//     ]);
+// }
 
     /**
      * Get the authenticated User.
@@ -48,7 +68,7 @@ class AuthController extends Controller
      */
     public function me()
     {
-        return response()->json(auth('api')->user());
+        return response()->json(auth('user')->user());
     }
 
     /**
@@ -58,7 +78,7 @@ class AuthController extends Controller
      */
     public function logout()
     {
-        auth('api')->logout();
+        auth('user')->logout();
 
         return response()->json(['message' => 'Successfully logged out']);
     }
@@ -70,7 +90,7 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        return $this->respondWithToken(auth('api')->refresh());
+        return $this->respondWithToken(auth('user')->refresh());
     }
 
     /**
@@ -85,7 +105,7 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth('api')->factory()->getTTL() * 60
+            'expires_in' => auth('user')->factory()->getTTL() * 60
         ]);
     }
 }
